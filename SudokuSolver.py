@@ -1,14 +1,17 @@
+from random import shuffle, randint
+
 board = [
-    [5,3,0,0,7,0,0,0,0],
-    [6,0,0,1,9,5,0,0,0],
-    [0,9,8,0,0,0,0,6,0],
-    [8,0,0,0,6,0,0,0,3],
-    [4,0,0,8,0,3,0,0,1],
-    [7,0,0,0,2,0,0,0,6],
-    [0,6,0,0,0,0,2,8,0],
-    [0,0,0,4,1,9,0,0,5],
-    [0,0,0,0,8,0,0,7,9]
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0]
     ]
+
 
 def print_board(board):
     for i in range(len(board)):
@@ -56,8 +59,10 @@ def solve(board):
         return True
     else:
         row, col = find
-        
-    for i in range(1,10):
+
+    numlist = [1,2,3,4,5,6,7,8,9]
+    shuffle(numlist)
+    for i in numlist:
         if valid(board, i, (row,col)):
             board[row][col] = i
             
@@ -68,8 +73,77 @@ def solve(board):
             
     return False
 
-print_board(board)
+def num_solutions(board):
+    if board[1] > 1:
+        return False
+    find = find_empty(board[0])
+    if not find:
+        board[1] += 1
+        return False
+    else:
+        row, col = find
 
+    numlist = [1,2,3,4,5,6,7,8,9]
+    #shuffle(numlist)
+    for i in numlist:
+        if valid(board[0], i, (row,col)):
+            board[0][row][col] = i
+            
+            if num_solutions(board):
+                return True
+            
+            board[0][row][col] = 0
+            
+    return False
+
+def remove_numbers(board, amount):
+    attempts = 15
+    attempts_left = attempts
+    while amount > 0 and attempts_left > 0:
+        row = randint(0,8)
+        col = randint(0,8)
+        while board[row][col] == 0:
+            row = randint(0,8)
+            col = randint(0,8)
+        backup = board[row][col]
+        board[row][col] = 0
+        
+        board_copy = [
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0]
+            ]
+        for j in range(len(board)):
+            for k in range(len(board[j])):
+                board_copy[j][k] = board[j][k]
+                
+        board_w_num_sol = [board_copy,0]
+        num_solutions(board_w_num_sol)
+        if board_w_num_sol[1] != 1:
+            board[row][col] = backup
+            attempts_left -= 1
+        if board_w_num_sol[1] == 1:
+            amount -= 1
+            attempts_left = attempts
+            
+        
+        
+
+#print_board(board)
 solve(board)
-print("")
+
+remove_numbers(board, 60)
 print_board(board)
+print("\nSolving...\n")
+
+
+if(solve(board)):
+    print_board(board)
+else:
+    print("Unsolvable")

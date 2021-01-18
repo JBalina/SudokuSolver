@@ -24,6 +24,7 @@ def print_board(board):
                 print(board[i][j])
             else:
                 print(str(board[i][j])+" ", end="")
+    print("")
                     
                     
 def find_empty(board):
@@ -133,12 +134,18 @@ def remove_numbers(board, amount):
             attempts_left = attempts
             
         
-        
+def generate_new_board(board, difficulty):
+    for i in range(len(board)):
+        for j in range(len(board[0])):
+            board[i][j] = 0
+    solve(board)
+    remove_numbers(board, difficulty*15)
 
 #print_board(board)
 solve(board)
-
-remove_numbers(board, 60)
+print_board(board)
+#remove_numbers(board, 30)
+generate_new_board(board, 3)
 print_board(board)
 print("\nSolving...\n")
 
